@@ -1,0 +1,11 @@
+book_filename: "paper"
+delete_merged_file: true
+language:
+  ui:
+    chapter_name: "Section "
+rmd_subdir: yes
+output_dir: "../output"
+rmd_files: ["../00-abstract.Rmd",    "../01-introduction.Rmd",
+            "../02-methods.Rmd",     "../03-results.Rmd",
+            "../04-discussion.Rmd",  "../05-conclusion.Rmd",
+            "../06-figures.Rmd",     "../07-references.Rmd"]

@@ -1,0 +1,5 @@
+# Introduction {#intro}
+
+Demonstrate single and multiple references. 
+
+Some background information here.[@author1_year1] More background information here.[@author2_year2; @author3_year3] 

@@ -1,0 +1,7 @@
+# Results
+
+Demonstrate referencing figures, and tables.
+
+The geographic (Figure \@ref(fig:map)) and numerical (Figure \@ref(fig:access-tx)) distributions of prevalence of key health measures were determined.
+
+The ten cities with the greatest prevalence of lack of access to health insurance in 2016 in this dataset were determined (Table \@ref(tab:access-tab)).

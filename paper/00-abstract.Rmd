@@ -1,0 +1,52 @@
+---
+title: "Title"
+output:
+  bookdown::word_document2:
+    reference_docx: "style_template.docx" 
+documentclass: book
+bibliography: [packages.bib, references.bib]
+csl: "nature.csl"
+link-citations: yes
+---
+
+First author,^1,2^ Second author,^3^
+
+1.	Institution 1
+2.	Institution 2
+3.	Institution 3
+
+# Abstract
+
+## Purpose
+...
+
+## Design
+...
+
+## Participants
+...
+
+## Methods
+...
+
+## Main Outcome Measures
+...
+
+## Results
+...
+
+## Discussion
+...
+
+## Conclusion
+...
+
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(
+    x = c(.packages(), 
+          'tidyverse', 'knitr', 'bookdown'),
+    file = 'packages.bib'
+)
+```

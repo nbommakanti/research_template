@@ -1,0 +1,44 @@
+# Figures and Tables
+
+```{r echo = FALSE}
+library(tidyverse)
+library(here)
+```
+
+## Figures
+
+Demonstrate including figures
+
+```{r map, echo = FALSE, fig.cap = 'Maps of health insurance coverage and high blood pressure.'}
+knitr::include_graphics(
+    here("figures", "maps.png")
+)
+```
+
+```{r access-tx, echo = FALSE, fig.cap = 'A closer look at access to health insurance in Texas, by city.'}
+knitr::include_graphics(
+    here("figures", "access_tx.png")
+)
+```
+
+## Tables
+
+```{r echo = FALSE}
+load(here("data", "cdc_clean.RData"))
+```
+
+```{r access-tab, echo = FALSE}
+df %>% 
+    filter(parameter == "access2") %>% 
+    group_by(city, state) %>% 
+    summarize(mean = round(mean(prevalence_adj), 1),
+              max = max(prevalence_adj),
+              min = min(prevalence_adj)) %>% 
+    arrange(-mean) %>% 
+    head(10) %>% 
+    knitr::kable(
+        caption = 'Greatest prevalence of lack of access to health insurance in this dataset'
+    )
+```
+
+

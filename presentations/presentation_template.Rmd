@@ -1,0 +1,63 @@
+---
+title: "Outline"
+author: "Author"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: powerpoint_presentation
+editor_options: 
+  chunk_output_type: console
+---
+```{r setup, include=FALSE}
+library(tidyverse)
+library(here)
+knitr::opts_chunk$set(echo = FALSE)
+```
+## R Markdown
+
+Slide outline template. See <http://rmarkdown.rstudio.com>.
+
+Click the **Knit** button to make the slideshow.
+
+## Bullets
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+## Table by hand
+
+|  Item   | Number |
+|:-------:|:------:|
+| Apples  | 1,000  |
+| Oranges |  500   |
+
+## Table from code
+
+```{r}
+tribble(
+    ~Item, ~Number,
+    "Apples", 1000,
+    "Oranges", 500
+) %>% 
+    knitr::kable(align = "c", format.args = list(big.mark = ','))
+``` 
+
+## Plot from code
+```{r fig.height=7, fig.width=7}
+x <- seq(1:100)
+y <- x + runif(100, max = 10)
+d <- data.frame(x,y)
+(p <- d %>% 
+    ggplot(aes(x,y)) + 
+    geom_point() + 
+    geom_smooth(method = "lm", color = "darkred") +
+    labs(title = "Scatterplot", subtitle = "y as a function of x",
+         x = "x", y = "y") +
+    theme_bw())
+```
+
+## Plot from file
+```{r echo=FALSE}
+ggsave(filename = here("figures", "scatter.png"), plot = p,
+       width = 7, height = 7)
+knitr::include_graphics(here("figures", "scatter.png"))
+```

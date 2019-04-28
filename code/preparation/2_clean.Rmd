@@ -1,0 +1,112 @@
+---
+title: "Clean data"
+date: "`r format(Sys.time(), '%B %d, %Y. %H:%M')`"
+editor_options:
+  chunk_output_type: console
+output:
+  html_document: 
+    df_print: tibble
+    highlight: kate
+    number_sections: yes
+    theme: paper
+    toc: yes
+---
+
+```{r, echo = FALSE}
+# Collapse code and output into one box for readability
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>"
+)
+```
+
+**Purpose**: Clean raw data. Cleaned data will be saved to the `data` folder.
+
+```{r message=FALSE}
+# Load packages
+library(tidyverse)
+library(here)
+library(skimr)
+library(janitor)
+```
+
+# Load
+```{r message=FALSE}
+# Load
+df <- read_csv(here("data-raw", "cdc.csv"))
+
+# Clean names
+df <- janitor::clean_names(df)
+
+# View data
+df
+```
+
+# Inspect
+
+```{r}
+skimr::skim(df)
+```
+
+We see 47 missing values for `paptest*`. Let us explore these missing data.
+```{r}
+# Visualize missing entries by state
+df %>% 
+    filter(is.na(paptest_crude_prev)) %>%
+    count(state_abbr) %>% 
+    mutate(state_abbr = fct_reorder(state_abbr, n)) %>% 
+    ggplot(aes(x = state_abbr, y = n)) +
+    geom_segment(aes(x = state_abbr, xend = state_abbr, y = 0, yend = n),
+                 color = "#666970") +
+    geom_point(color = "#666970", size = 2) +
+    labs(title = "Number of missing entries for Pap tests by state", x = "", y = "") +
+    coord_flip(ylim = c(0, 15)) +
+    theme_bw()
+```
+
+We identified a known issue. See this notice on the [500 Cities website](https://www.cdc.gov/500cities/index.htm):
+
+> Data about Papanicolaou (Pap) smear use among adult women aged 21-65 years were not available from the 2016 Behavioral Risk Factor Surveillance System for 8 states and therefore not available for 47 cities in those 8 states for the 500 Cities project.  The affected states are: Arizona, Arkansas, Connecticut, Maryland, New Hampshire, Rhode Island, Vermont, and Washington.  The 500 Cities dataset includes a record for this measure for those 47 cities but it is  shown as an empty data cell and it is appropriately footnoted.  The interactive map and the map books do not show the Pap test measure for the cities or their census tracts in the 47 cities in these 8 states.
+
+> In previous versions of 500 Cities datasets (released in 2016 and 2017), 6 census tracts from Tucson, Arizona were inadvertently omitted.  The datasets have been corrected and users may download them from the 500 Cities Data Portal (https://chronicdata.cdc.gov/browse?category=500+Cities).  The updated 500 Cities dataset released in 2018 is unaffected.
+
+# Clean
+```{r}
+# Rename state and city variables
+df <- df %>% 
+  rename(state = state_abbr, city = place_name)
+
+# Separate `geolocation` into latitude and longitude
+df <- df %>% 
+  mutate(geolocation = str_replace_all(geolocation, "[() ]", "")) %>% 
+  separate(geolocation, into = c("lat", "long"), sep = ",") %>% 
+  mutate(lat = as.numeric(lat), long = as.numeric(long))
+```
+
+```{r}
+# Select variables of interest
+df <- df %>%
+    select(state, city, lat, long, matches("adj_prev"))
+```
+
+```{r}
+# Reshape to "long" format
+df <- df %>% 
+  gather(key = "parameter", 
+         value = "prevalence_adj", 
+         matches("adj_prev")) %>% 
+  mutate(parameter = str_replace(parameter, 
+                                 pattern = "_adj_prev", 
+                                 replacement = ""))
+```
+
+```{r}
+# Keep continental US data
+df <- df %>% 
+  filter(!state %in% c("AK", "HI"))
+```
+
+# Save
+```{r}
+save(df, file = here("data", "cdc_clean.RData"))
+```

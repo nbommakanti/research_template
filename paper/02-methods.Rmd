@@ -1,0 +1,13 @@
+# Methods
+
+Demonstrate subsections and an equation.
+
+## Subsection
+
+...
+
+## Subsection
+
+Equation:
+
+$$ \Delta P = \frac{8\mu LQ}{\pi R^4} $$
