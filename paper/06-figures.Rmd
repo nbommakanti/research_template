@@ -1,6 +1,6 @@
 # Figures and Tables
 
-```{r echo = FALSE}
+```{r include = FALSE}
 library(tidyverse)
 library(here)
 ```
